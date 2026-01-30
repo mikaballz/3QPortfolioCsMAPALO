@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>View Signups</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#f4f4f4;
+}
+
+.container{
+    width:90%;
+    margin:30px auto;
+    background:white;
+    padding:20px;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:15px;
+}
+
+th,td{
+    border:1px solid #ccc;
+    padding:8px;
+    text-align:left;
+}
+
+select{
+    padding:6px;
+}
+
+.message{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+a{
+    display:inline-block;
+    margin-top:20px;
+}
+</style>
+
+<script>
+
+const STORAGE_KEY = "clubSignUps";
+
+let allSignups = [];
+
+
+function loadSignups(){
+
+    const data = localStorage.getItem(STORAGE_KEY);
+
+    if(!data){
+        document.getElementById("tableBody").innerHTML = "";
+        document.getElementById("total").textContent = "0";
+        document.getElementById("message").textContent =
+            "No sign-ups found in local storage.";
+        return;
+    }
+
+    allSignups = JSON.parse(data);
+
+    populateClubs();
+    displayTable(allSignups);
+}
+
+
+function populateClubs(){
+
+    const select = document.getElementById("clubFilter");
+    const clubs = new Set();
+
+    allSignups.forEach(s => clubs.add(s.club));
+
+    
+    select.innerHTML = '<option value="ALL">ALL</option>';
+
+    clubs.forEach(c=>{
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        select.appendChild(opt);
+    });
+}
+
+
+function displayTable(list){
+
+    const tbody = document.getElementById("tableBody");
+    const msg = document.getElementById("message");
+
+    tbody.innerHTML = "";
+    msg.textContent = "";
+
+    if(list.length === 0){
+        document.getElementById("total").textContent = "0";
+        msg.textContent = "No sign-ups for the selected club.";
+        return;
+    }
+
+    list.forEach(s => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${s.studentId}</td>
+            <td>${s.fullName}</td>
+            <td>${s.gradeLevel}</td>
+            <td>${s.status}</td>
+            <td>${s.club}</td>
+            <td>${s.email}</td>
+        `;
+
+        tbody.appendChild(row);
+
+    });
+
+    document.getElementById("total").textContent = list.length;
+}
+
+
+function filterClub(){
+
+    const selected = document.getElementById("clubFilter").value;
+
+    if(selected === "ALL"){
+        displayTable(allSignups);
+        return;
+    }
+
+    const filtered = allSignups.filter(s => s.club === selected);
+
+    displayTable(filtered);
+}
+
+window.onload = loadSignups;
+
+</script>
+
+</head>
+<body>
+
+<div class="container">
+
+<h2>Student Club Sign-ups</h2>
+
+<label>
+Filter by Club:
+<select id="clubFilter" onchange="filterClub()">
+<option value="ALL">ALL</option>
+</select>
+</label>
+
+<table>
+<thead>
+<tr>
+<th>Student ID</th>
+<th>Name</th>
+<th>Grade</th>
+<th>Status</th>
+<th>Club</th>
+<th>Email</th>
+</tr>
+</thead>
+
+<tbody id="tableBody"></tbody>
+</table>
+
+<p>Total Sign-ups: <span id="total">0</span></p>
+
+<p id="message" class="message"></p>
+
+<a href="index.html">← Back to Sign-up Page</a>
+
+</div>
+
+</body>
+</html>
