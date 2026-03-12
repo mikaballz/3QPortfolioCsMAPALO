@@ -1,9 +1,10 @@
 const movieForm = document.getElementById('movieForm');
 const starRating = document.getElementById('starRating');
 const movieList = document.getElementById('movieList');
+
 let selectedRating = 0;
 
-//i think this is where it starts
+// starting point: also just the star rating
 starRating.addEventListener('click', (e) => {
     if (e.target.classList.contains('star')) {
         selectedRating = parseInt(e.target.dataset.value);
@@ -20,21 +21,26 @@ function updateStars(rating) {
     });
 }
 
-//loading of existing movies from localStorage
+// loading of existing movies from localStorage
 function loadMovies() {
     const movies = JSON.parse(localStorage.getItem('movies')) || [];
     movieList.innerHTML = '';
-    movies.forEach(movie => {
+
+    movies.forEach((movie, index) => {
         const div = document.createElement('div');
         div.classList.add('movie-item');
+
         div.innerHTML = `
             <strong>${movie.title}</strong> (${movie.genre})<br>
-            ${getStars(movie.rating)}
+            ${getStars(movie.rating)}<br>
+            <button onclick="deleteMovie(${index})">Delete</button>
         `;
+
         movieList.appendChild(div);
     });
 }
 
+// display of star func
 function getStars(rating) {
     let starsHTML = '';
     for (let i = 1; i <= 5; i++) {
@@ -46,6 +52,7 @@ function getStars(rating) {
 // adding of movie
 movieForm.addEventListener('submit', (e) => {
     e.preventDefault();
+
     const title = document.getElementById('title').value;
     const genre = document.getElementById('genre').value;
 
@@ -54,16 +61,47 @@ movieForm.addEventListener('submit', (e) => {
         return;
     }
 
-    const movie = { title, genre, rating: selectedRating };
     const movies = JSON.parse(localStorage.getItem('movies')) || [];
-    movies.push(movie);
+
+    // CHECK IF MOVIE ALREADY EXISTS
+    const existingMovie = movies.find(movie => movie.title.toLowerCase() === title.toLowerCase());
+
+    if (existingMovie) {
+        // UPDATE: average the ratings
+        existingMovie.rating = Math.round((existingMovie.rating + selectedRating) / 2);
+        existingMovie.genre = genre; 
+    } 
+    else {
+        // ADD NEW MOVIE
+        const movie = { title, genre, rating: selectedRating };
+        movies.push(movie);
+    }
+
     localStorage.setItem('movies', JSON.stringify(movies));
 
     movieForm.reset();
     selectedRating = 0;
     updateStars(selectedRating);
+
     loadMovies();
 });
 
+// DELETE MOVIE FUNCTION
+function deleteMovie(index) {
 
+    const confirmDelete = confirm("Are you sure you want to delete this movie?");
+
+    if (confirmDelete) {
+
+        const movies = JSON.parse(localStorage.getItem('movies')) || [];
+
+        movies.splice(index, 1); // remove movie
+
+        localStorage.setItem('movies', JSON.stringify(movies));
+
+        loadMovies(); // refresh list
+    }
+}
+
+// INITIAL LOAD
 loadMovies();
