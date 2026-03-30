@@ -57,7 +57,7 @@
 
 - Guided Question: What changed compared to the default static positioning? Try to give different values to top and left or you can change it to bottom, right.
 
--> I think the main difference between the default static positioning to the relative one is how the items are positioned. For the static position, it will measure from the corner of one item perpendicular (?) down. Static on the other hand is more of a linear positioning, aka, positioning by lines.
+-> I think the main difference between default static positioning and relative positioning is how the element can be moved. With static positioning, the element just stays in the normal flow of the page. You can’t really adjust it using top, left, bottom, or right, aka, it just follows the layout automatically. With relative positioning, the element still starts in its normal position, but now you can move it using top, left, etc. The important thing is that it moves relative to where it originally was, not from the corner of the page. So instead of being “linear positioning,” it’s more like you’re shifting the element from its original spot without affecting the rest of the layout too much.
 
 ### Step 2 (Fixed):
 
@@ -65,7 +65,7 @@
 
 - Guided Question: What happens when you scroll the page? Why does the footer behave differently from position relative?
 
--> I think it's because its fixed. Meaning to say that even though there can be multiple items "on top", the items will still not block or intervene with the footer as it is fixed in its position. It will not move even though we scroll up and down the page. It will remain at the same position on all times and it will not be affected by other elements and blocks around it.
+-> I think it’s because the footer is set to fixed positioning. This means that even if there are other elements on the page, the footer won’t move or be affected by them. It stays in the same position on the screen no matter what. So when you scroll up or down, the footer doesn’t move, it just stays visible the whole time. Other elements might pass behind it, but they don’t push it away or change its position. This is different from relative positioning, where the element still moves along with the page when you scroll because it’s part of the normal document flow.
 
 ### Step 3 (Absolute):
 
@@ -100,14 +100,28 @@
 - Challenge: 
     * What changes that you have to do on the code that will position .notice box on the top right corner of the .content box? Please write the code on paper as well (both html and css on the part of .notice and .content).
     * Try to change the position of .content to relative then to fixed. What do you observed each time?
+    -> When I changed .content to position: relative, it still stayed in its normal place in the layout, but I could move it slightly using top and left. It still moved together with the page when I scrolled, so it felt like part of the normal flow. But when I changed it to position: fixed, it became very different. The content stayed in one place on the screen and didn’t move at all when I scrolled. It kind of looked like it was floating above everything else. It also ignored the normal layout, so other elements didn’t affect its position anymore.
     * What do you observe on about the effect of z-index on .notice and .content boxes?
+    -> From what I observed, the z-index controls which element appears on top when they overlap. The element with the higher z-index will be placed in front, while the lower one goes behind. So when .notice has a higher z-index than .content, it appears on top of it. But when I switch the values, .content covers the .notice instead. I also noticed that z-index only works properly when the elements have a position (like absolute, relative, or fixed). Without positioning, the z-index doesn’t really do anything.
 
 3. Please answer the following reflection questions (15 minutes)
 
     a. Could you summarize the differences between the CSS position values (static, relative, absolute, fixed)? 
+    1. Static
+    - Static is the default positioning, where elements just follow the normal layout of the page and can’t be adjusted using top, left, etc.
+    2. Relative
+    - Keeps the element in the normal flow, but allows you to move it slightly from its original position using top, left, and so on.
+    3. Absolute
+    - Removes the element from the normal flow and positions it based on its nearest positioned parent (or the page if there is none).
+    4. Fixed
+    - Also removed from the normal flow, but it stays fixed on the screen even when you scroll, unlike absolute which moves with the page.
 
     b. How does absolute positioning depend on its parent element?
+    -> Absolute positioning depends on the nearest parent that has a position (like relative, absolute, or fixed). If the parent has a position, the element will be placed relative to that parent. But if none of the parent elements have a position set, then the absolute element will position itself relative to the entire page (viewport) instead.
+
 
     c. How do you differentiate sticky from fixed (you can research on sticky)?
+    -> Sticky is kind of a mix of relative and fixed. At first, it behaves like a normal element and scrolls with the page. But once it reaches a certain point (like top: 0), it “sticks” and stays in place while scrolling. Fixed, on the other hand, is always fixed in one position from the start and does not move at all when you scroll.
 
     d. If you were designing a webpage for a school event, how might you use positioning to highlight important information? Please give concrete examples.
+    ->I would use fixed positioning for important things like a registration button so it stays visible even when users scroll. I could use absolute positioning to place labels or highlights on specific parts of the page, like putting a “New” or “Important” tag on event announcements. Sticky positioning would be useful for headers or navigation bars so they stay at the top while scrolling through event details. Lastly, I could use relative positioning for small adjustments, like aligning text or images properly without breaking the layout.
